@@ -1,0 +1,1477 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Lada App</title>
+
+<style>
+:root {
+  --bg:#f4f4f4;
+  --bg-2:#e7ebf0;
+  --card:#ffffff;
+  --text:#111;
+  --accent:#d32f2f;
+  --accent-2:#ff8f00;
+  --header-start:#202228;
+  --header-end:#8f1d1d;
+  --header-start-rgb:32,34,40;
+  --header-end-rgb:143,29,29;
+  --header-text:#fff;
+  --surface-shadow:0 14px 30px rgba(24,24,24,.12);
+}
+body.dark{
+  --bg:#121212;
+  --bg-2:#171a1f;
+  --card:#1e1e1e;
+  --text:#fff;
+  --accent:#ff5252;
+  --accent-2:#ffb74d;
+  --header-start:#101216;
+  --header-end:#5f1111;
+  --header-start-rgb:16,18,22;
+  --header-end-rgb:95,17,17;
+  --header-text:#f8f8f8;
+  --surface-shadow:0 14px 30px rgba(0,0,0,.42);
+}
+body{
+  margin:0;
+  font-family:"Trebuchet MS","Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 14% -8%, rgba(var(--header-end-rgb),.22), transparent 42%),
+    radial-gradient(circle at 86% -10%, rgba(var(--header-start-rgb),.28), transparent 46%),
+    repeating-linear-gradient(-45deg, rgba(var(--header-start-rgb),.035) 0 10px, transparent 10px 20px),
+    linear-gradient(180deg,var(--bg),var(--bg-2));
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* layout */
+.page-content{padding:20px}
+.layout{display:flex;gap:20px;align-items:flex-start; justify-content: space-between; margin-top:14px;}
+@media(max-width:900px){.layout{flex-direction:column}}
+
+.card,.notes{
+  background:var(--card);
+  padding:20px;
+  border-radius:8px;
+  width:100%;
+  box-shadow:var(--surface-shadow);
+}
+.notes{max-width:350px}
+.panel-hidden{display:none}
+.hidden{display:none !important}
+.panel-enter{
+  animation:panelOpen .28s ease both;
+}
+@keyframes panelOpen{
+  from{
+    opacity:0;
+    transform:translateY(10px) scale(.99);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.panel-launchers{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:8px 0 12px;
+}
+.launcher-btn{
+  width:auto;
+  height:auto;
+  margin:0;
+  padding:10px 16px;
+  border-radius:10px;
+  border:1px solid #777;
+  background:var(--card);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:700;
+  box-shadow:none;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.launcher-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--surface-shadow);
+}
+.launcher-btn.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+.launcher-ico{
+  width:26px;
+  height:26px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  background:rgba(0,0,0,.12);
+  font-size:15px;
+  line-height:1;
+}
+.launcher-btn.active .launcher-ico{
+  background:rgba(255,255,255,.22);
+}
+
+.info-box{
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:var(--surface-shadow);
+  padding:16px 18px;
+}
+.info-box h2{
+  margin:0 0 8px;
+}
+.info-box p{
+  margin:0 0 8px;
+  line-height:1.45;
+}
+.info-box ul{
+  margin:8px 0 0 20px;
+  padding:0;
+}
+.info-box li{
+  margin-bottom:6px;
+}
+
+.auth-box{
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:var(--surface-shadow);
+  padding:18px;
+  margin-bottom:14px;
+  max-width:460px;
+  margin-left:auto;
+  margin-right:auto;
+}
+.auth-box h2{
+  margin:0 0 8px;
+}
+.auth-box p{
+  margin:0 0 14px;
+  line-height:1.45;
+}
+.auth-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-bottom:10px;
+}
+.auth-grid input,
+.auth-grid select{
+  width:100%;
+  margin:0;
+  box-sizing:border-box;
+  height:46px;
+}
+.auth-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.auth-action{
+  width:auto;
+  height:auto;
+  margin:0;
+  padding:10px 18px;
+  border-radius:10px;
+}
+.auth-action.secondary{
+  background:transparent;
+  border:1px solid #888;
+  color:var(--text);
+  box-shadow:none;
+}
+.auth-action.secondary:hover{
+  background:rgba(255,255,255,.06);
+  filter:none;
+}
+.auth-message{
+  margin-top:10px;
+  min-height:20px;
+  font-weight:700;
+}
+
+.site-header{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px 24px;
+  background:linear-gradient(120deg,var(--header-start),var(--header-end));
+  color:var(--header-text);
+  border-bottom:3px solid var(--accent-2);
+  box-shadow:0 8px 22px rgba(0,0,0,.24);
+  overflow:hidden;
+}
+.site-header::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(-45deg,rgba(255,255,255,.08) 0 8px,transparent 8px 16px);
+  opacity:.2;
+  pointer-events:none;
+}
+.site-header > *{
+  position:relative;
+  z-index:1;
+}
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.user-badge{
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.35);
+  font-size:.92rem;
+  font-weight:700;
+}
+.user-badge.profile-link{
+  cursor:pointer;
+  transition:transform .2s ease, background .2s ease;
+}
+.user-badge.profile-link:hover{
+  transform:translateY(-1px);
+  background:rgba(255,255,255,.24);
+}
+.brand h1{
+  margin:0;
+  letter-spacing:.08em;
+  font-size:1.35rem;
+}
+.brand p{
+  margin:6px 0 0;
+  font-size:.92rem;
+  opacity:.88;
+}
+.theme-btn{
+  width:auto !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:10px 16px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(255,255,255,.45) !important;
+  background:rgba(255,255,255,.14) !important;
+  color:#fff !important;
+  font-weight:700;
+  letter-spacing:.02em;
+  transition:transform .2s ease, background .2s ease;
+}
+.theme-btn:hover{
+  background:rgba(255,255,255,.24) !important;
+  transform:translateY(-1px);
+  box-shadow:none;
+  filter:none;
+}
+
+textarea{
+  width:93%;
+  height:250px;
+  padding:10px;
+  background:var(--bg);
+  color:var(--text);
+  border:1px solid #777;
+  margin:0;
+}
+
+select,input,button{
+  width:100%;
+  margin-bottom:10px;
+  padding:8px;
+  background:var(--bg);
+  color:var(--text);
+  border:1px solid #777;
+  box-sizing:border-box;
+}
+
+button{
+  background:linear-gradient(180deg,#ff6161,#ff4f57);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  width: 200px;
+  height: 50px;
+  border-radius:10px;
+  font-weight:700;
+  letter-spacing:.01em;
+  box-shadow:0 8px 18px rgba(0,0,0,.16);
+  transition:transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px rgba(0,0,0,.2);
+  filter:brightness(1.04);
+}
+button:active{
+  transform:translateY(0);
+  box-shadow:0 6px 14px rgba(0,0,0,.14);
+}
+
+.slider{
+  position:relative;
+  margin:0 auto 10px;
+  width:100%;
+  max-width:560px;
+}
+.slider img{
+  width:100%;
+  aspect-ratio:16/9;
+  height:auto;
+  object-fit:cover;
+  border-radius:6px;
+}
+.slider button{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,.6);color:#fff;
+  margin:0;
+  padding:0;
+  box-shadow:none;
+}
+.slider button:hover,
+.slider button:active{
+  transform:translateY(-50%);
+  box-shadow:none;
+  filter:none;
+}
+.slider button:hover{
+  background:rgba(0,0,0,.75);
+}
+.prev{left:6px}
+.next{right:6px}
+
+.progress{
+  height:18px;
+  background:#4443;
+  border-radius:10px;
+  overflow:hidden;
+  margin:6px 0 10px;
+}
+.bar{
+  height:100%;
+  background:linear-gradient(90deg,#4caf50,#ff9800,#f44336);
+  width:0%;
+  transition:.4s;
+}
+
+.level{
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.section-title{
+  margin-top:15px;
+  font-weight:bold;
+}
+.calc-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:20px;
+  align-items:start;
+}
+.calc-main{
+  min-width:0;
+}
+.calc-main select,
+.calc-main input{
+  height:42px;
+}
+.calc-main > button{
+  width:100%;
+  height:46px;
+}
+.calc-side{
+  width:auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.calc-side-panel{
+  background:var(--card);
+  border:1px solid #777;
+  border-radius:14px;
+  box-shadow:var(--surface-shadow);
+  padding:14px;
+}
+.calc-side-panel .insight-box{
+  margin-top:0;
+  padding:0;
+  border:none;
+  background:transparent;
+}
+.calc-side-panel .insight-box + .insight-box{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid #666;
+}
+.calc-side-panel .export-btn{
+  margin-top:12px;
+}
+.chat-panel{
+  background:var(--card);
+  border:1px solid #777;
+  border-radius:14px;
+  box-shadow:var(--surface-shadow);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.chat-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.chat-head h3{
+  margin:0;
+}
+.chat-head-actions{
+  display:flex;
+  align-items:center;
+}
+.chat-profile-btn{
+  width:auto;
+  min-width:auto;
+  height:auto;
+  margin:0;
+  padding:7px 12px;
+  border-radius:8px;
+  border:1px solid #777;
+  background:var(--card);
+  color:var(--text);
+  font-weight:700;
+  box-shadow:none;
+}
+.chat-profile-btn:hover{
+  filter:none;
+  background:rgba(0,0,0,.08);
+}
+.chat-subtitle{
+  margin:3px 0 0;
+  opacity:.8;
+  font-size:.85rem;
+}
+.chat-messages{
+  flex:1;
+  min-height:180px;
+  max-height:240px;
+  overflow-y:auto;
+  border:1px solid #666;
+  border-radius:10px;
+  padding:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.05));
+}
+.chat-empty{
+  opacity:.75;
+  font-size:.92rem;
+  line-height:1.35;
+  padding:2px;
+}
+.chat-item{
+  border:1px solid #666;
+  border-radius:9px;
+  padding:8px;
+  margin-bottom:8px;
+  background:rgba(0,0,0,.08);
+}
+.chat-item:last-child{
+  margin-bottom:0;
+}
+.chat-item.own{
+  border-color:var(--accent);
+}
+.chat-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  margin-bottom:5px;
+  font-size:.78rem;
+  opacity:.8;
+}
+.chat-author{
+  font-weight:700;
+}
+.chat-author-btn{
+  all:unset;
+  display:inline-block;
+  color:inherit;
+  font:inherit;
+  font-weight:700;
+  line-height:1.2;
+  text-align:left;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+.chat-author-btn:hover{
+  background:transparent;
+  transform:none;
+  box-shadow:none;
+  filter:none;
+  color:var(--accent-2);
+}
+.profile-panel{
+  background:var(--card);
+  border:1px solid #777;
+  border-radius:14px;
+  box-shadow:var(--surface-shadow);
+  padding:14px;
+}
+.profile-panel-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:10px;
+}
+.profile-panel-head h3{
+  margin:0;
+}
+.profile-close-btn{
+  width:auto;
+  min-width:auto;
+  height:auto;
+  margin:0;
+  padding:5px 10px;
+  border-radius:8px;
+  border:1px solid #777;
+  background:transparent;
+  color:var(--text);
+  box-shadow:none;
+}
+.profile-close-btn:hover{
+  filter:none;
+  background:rgba(0,0,0,.08);
+}
+.profile-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+.profile-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px dashed #777;
+  padding-bottom:6px;
+}
+.profile-row:last-child{
+  border-bottom:none;
+  padding-bottom:0;
+}
+.profile-label{
+  opacity:.8;
+}
+.profile-value{
+  font-weight:700;
+  text-align:right;
+}
+.chat-text{
+  margin:0;
+  line-height:1.35;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.chat-form{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  margin-top:10px;
+}
+.chat-input{
+  margin:0;
+  height:44px;
+}
+.chat-send{
+  width:auto;
+  min-width:110px;
+  height:44px;
+  margin:0;
+  padding:0 14px;
+}
+.notes-side-panel{
+  background:var(--card);
+  border:1px solid #777;
+  border-radius:14px;
+  box-shadow:var(--surface-shadow);
+  padding:14px;
+}
+.notes-side-panel h3{
+  margin:0;
+}
+.notes-subtitle{
+  margin:4px 0 10px;
+  opacity:.8;
+  font-size:.85rem;
+}
+.notes-input{
+  height:190px;
+  min-height:150px;
+  max-height:280px;
+  resize:vertical;
+}
+.export-btn{
+  width:100%;
+  min-height:46px;
+  height:auto;
+  margin:0;
+}
+.insight-box{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid #777;
+  border-radius:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.03));
+}
+.insight-box h3{
+  margin:0 0 8px;
+  font-size:1rem;
+}
+.summary-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+}
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:.95rem;
+}
+.summary-label{
+  opacity:.8;
+}
+.summary-value{
+  font-weight:700;
+  text-align:right;
+}
+.recommend-list{
+  margin:8px 0 0 20px;
+  padding:0;
+}
+.recommend-list li{
+  margin-bottom:6px;
+  line-height:1.35;
+}
+
+@media(max-width:1100px){
+  .calc-layout{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:700px){
+  .site-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .panel-launchers{
+    flex-direction:column;
+  }
+  .launcher-btn{
+    width:100%;
+    justify-content:center;
+  }
+  .auth-grid{
+    grid-template-columns:1fr;
+  }
+  .calc-layout{
+    grid-template-columns:1fr;
+  }
+  .calc-side{
+    width:100%;
+  }
+  .chat-form{
+    grid-template-columns:1fr;
+  }
+  .chat-send{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+<div class="brand">
+<h1>LADA GARAGE</h1>
+<p>Калькулятор ресурса и заметки по обслуживанию</p>
+</div>
+<div class="header-actions">
+<span id="userBadge" class="user-badge hidden"></span>
+<button id="logoutBtn" class="theme-btn hidden" onclick="logout()">Выйти</button>
+<button id="themeToggleBtn" class="theme-btn" onclick="toggleTheme()">Тёмная тема</button>
+</div>
+</header>
+
+<div class="page-content">
+<section id="authSection" class="auth-box">
+<h2>Вход в аккаунт</h2>
+<p>Войдите в аккаунт. При регистрации укажите пол и машину пользователя для карточки профиля в чате.</p>
+<div class="auth-grid">
+<input id="authUsername" type="text" placeholder="Логин">
+<input id="authPassword" type="password" placeholder="Пароль">
+<select id="authGender">
+<option value="">Пол (для регистрации)</option>
+<option value="male">Мужской</option>
+<option value="female">Женский</option>
+</select>
+<select id="authCar">
+<option value="">Машина (для регистрации)</option>
+<option value="Granta">Lada Granta</option>
+<option value="Vesta">Lada Vesta</option>
+<option value="Niva">Lada Niva</option>
+<option value="Kalina">Lada Kalina</option>
+</select>
+</div>
+<div class="auth-actions">
+<button class="auth-action" onclick="loginUser()">Войти</button>
+<button class="auth-action secondary" onclick="registerUser()">Создать аккаунт</button>
+</div>
+<div id="authMessage" class="auth-message"></div>
+</section>
+
+<div id="appShell" class="hidden">
+<section class="info-box">
+<h2>О калькуляторе, заметках и чате</h2>
+<p>Здесь можно быстро оценить остаточный ресурс узлов автомобиля, вести личные записи по обслуживанию и обсуждать вопросы в общем чате.</p>
+<ul>
+<li><strong>Калькулятор:</strong> выбирайте модель, узел и условия эксплуатации, вводите пробег и получайте прогноз остатка ресурса.</li>
+<li><strong>Заметки:</strong> фиксируйте замены деталей, даты ТО и важные комментарии по машине.</li>
+<li><strong>Общий чат:</strong> сообщения видны всем локальным аккаунтам в этом браузере.</li>
+<li>Данные сохраняются в браузере на этом устройстве.</li>
+</ul>
+</section>
+
+<div class="layout">
+
+<div id="calculatorPanel" class="card panel-hidden">
+
+<h2>Lada App</h2>
+
+<div class="calc-layout">
+<div class="calc-main">
+
+<div class="slider">
+<button class="prev" onclick="prevCar()">&lt;</button>
+<img id="carImage" src="granta.png">
+<button class="next" onclick="nextCar()">&gt;</button>
+</div>
+
+<select id="model" onchange="syncSlider();saveAll()">
+<option value="Granta">Lada Granta</option>
+<option value="Vesta">Lada Vesta</option>
+<option value="Niva">Lada Niva</option>
+<option value="Kalina">Lada Kalina</option>
+</select>
+
+<select id="part">
+<option value="engine">Двигатель</option>
+<option value="gearbox">КПП</option>
+<option value="clutch">Сцепление</option>
+<option value="suspension">Подвеска</option>
+</select>
+
+<select id="condition">
+<option value="city">Город</option>
+<option value="mixed">Смешанный</option>
+<option value="highway">Трасса</option>
+<option value="hard">Тяжёлые</option>
+</select>
+
+<select id="season">
+<option value="summer">Лето</option>
+<option value="winter">Зима</option>
+</select>
+
+<select id="drivingStyle">
+<option value="calm">Спокойная езда</option>
+<option value="normal">Обычная езда</option>
+<option value="aggressive">Агрессивная езда</option>
+</select>
+
+<input type="number" id="mileage" placeholder="Пробег">
+<button onclick="calculate()">Рассчитать</button>
+
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="resourceText"></div>
+<div class="level" id="level"></div>
+
+<div class="section-title">Расход топлива</div>
+<input type="number" id="fuelLiters" placeholder="Литры">
+<input type="number" id="fuelKm" placeholder="км">
+<button onclick="calcFuel()">Рассчитать расход</button>
+<div id="fuelResult"></div>
+</div>
+
+<div class="calc-side">
+<div class="calc-side-panel">
+<div class="insight-box">
+<h3>Итог по авто</h3>
+<div class="summary-grid">
+<div class="summary-row"><span class="summary-label">Модель</span><span id="sumModel" class="summary-value">-</span></div>
+<div class="summary-row"><span class="summary-label">Узел</span><span id="sumPart" class="summary-value">-</span></div>
+<div class="summary-row"><span class="summary-label">Пробег</span><span id="sumMileage" class="summary-value">-</span></div>
+<div class="summary-row"><span class="summary-label">Остаток ресурса</span><span id="sumRemaining" class="summary-value">-</span></div>
+<div class="summary-row"><span class="summary-label">Риск</span><span id="sumRisk" class="summary-value">-</span></div>
+<div class="summary-row"><span class="summary-label">Расход</span><span id="sumFuel" class="summary-value">-</span></div>
+</div>
+</div>
+
+<div class="insight-box">
+<h3>Рекомендации по ТО</h3>
+<ul id="recommendList" class="recommend-list">
+<li>Введите пробег и нажмите «Рассчитать», чтобы получить персональные советы.</li>
+</ul>
+</div>
+
+<button class="export-btn" onclick="exportData()">Скачать отчёт</button>
+</div>
+
+<div class="notes-side-panel">
+<h3>Личные заметки</h3>
+<p class="notes-subtitle">Сохраняются только в вашем аккаунте</p>
+<textarea id="notes" class="notes-input" placeholder="Запишите даты ТО, заменённые детали и важные комментарии"></textarea>
+</div>
+
+<div class="chat-panel">
+<div class="chat-head">
+<div>
+<h3>Общий чат</h3>
+<p class="chat-subtitle">Нажмите на ник, чтобы открыть профиль</p>
+</div>
+<div class="chat-head-actions">
+<button id="openMyProfileBtn" class="chat-profile-btn" type="button">Мой профиль</button>
+</div>
+</div>
+<div id="chatMessages" class="chat-messages">
+<div class="chat-empty">Пока нет сообщений. Начните диалог.</div>
+</div>
+<div class="chat-form">
+<input id="chatInput" class="chat-input" type="text" maxlength="400" placeholder="Введите сообщение">
+<button id="chatSendBtn" class="chat-send" type="button">Отправить</button>
+</div>
+</div>
+
+<div id="profilePanel" class="profile-panel hidden">
+<div class="profile-panel-head">
+<h3 id="profileTitle">Профиль пользователя</h3>
+<button id="profileCloseBtn" class="profile-close-btn" type="button">Закрыть</button>
+</div>
+<div class="profile-grid">
+<div class="profile-row"><span class="profile-label">Логин</span><span id="profileUsername" class="profile-value">-</span></div>
+<div class="profile-row"><span class="profile-label">Пол</span><span id="profileGender" class="profile-value">-</span></div>
+<div class="profile-row"><span class="profile-label">Дата регистрации</span><span id="profileRegisteredAt" class="profile-value">-</span></div>
+<div class="profile-row"><span class="profile-label">Машина</span><span id="profileCar" class="profile-value">-</span></div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+<script>
+function updateThemeButton(){
+ const btn=document.getElementById("themeToggleBtn");
+ if(!btn)return;
+ btn.textContent=document.body.classList.contains("dark")?"Светлая тема":"Тёмная тема";
+}
+function toggleTheme(){
+ document.body.classList.toggle("dark");
+ localStorage.setItem("theme",
+  document.body.classList.contains("dark")?"dark":"light");
+ updateThemeButton();
+}
+if(localStorage.getItem("theme")==="dark"){
+ document.body.classList.add("dark");
+}
+updateThemeButton();
+
+const cars=[
+{model:"Granta",img:"granta.png"},
+{model:"Vesta",img:"vesta.png"},
+{model:"Niva",img:"niva.png"},
+{model:"Kalina",img:"kalina.png"}
+];
+let currentIndex=0;
+const img = document.getElementById("carImage");
+const modelSelect = document.getElementById("model");
+
+const mileageInput = document.getElementById("mileage");
+const part = document.getElementById("part");
+const condition = document.getElementById("condition");
+const seasonSelect = document.getElementById("season");
+const drivingStyleSelect = document.getElementById("drivingStyle");
+
+const bar = document.getElementById("bar");
+const resourceText = document.getElementById("resourceText");
+const level = document.getElementById("level");
+
+const fuelLiters = document.getElementById("fuelLiters");
+const fuelKm = document.getElementById("fuelKm");
+const fuelResult = document.getElementById("fuelResult");
+
+const notes = document.getElementById("notes");
+const calculatorPanel = document.getElementById("calculatorPanel");
+const authSection = document.getElementById("authSection");
+const appShell = document.getElementById("appShell");
+const authUsername = document.getElementById("authUsername");
+const authPassword = document.getElementById("authPassword");
+const authGender = document.getElementById("authGender");
+const authCar = document.getElementById("authCar");
+const authMessage = document.getElementById("authMessage");
+const userBadge = document.getElementById("userBadge");
+const logoutBtn = document.getElementById("logoutBtn");
+const sumModel = document.getElementById("sumModel");
+const sumPart = document.getElementById("sumPart");
+const sumMileage = document.getElementById("sumMileage");
+const sumRemaining = document.getElementById("sumRemaining");
+const sumRisk = document.getElementById("sumRisk");
+const sumFuel = document.getElementById("sumFuel");
+const recommendList = document.getElementById("recommendList");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+const chatSendBtn = document.getElementById("chatSendBtn");
+const openMyProfileBtn = document.getElementById("openMyProfileBtn");
+const profilePanel = document.getElementById("profilePanel");
+const profileCloseBtn = document.getElementById("profileCloseBtn");
+const profileUsername = document.getElementById("profileUsername");
+const profileGender = document.getElementById("profileGender");
+const profileRegisteredAt = document.getElementById("profileRegisteredAt");
+const profileCar = document.getElementById("profileCar");
+
+const GLOBAL_CHAT_KEY="ladaGlobalChat";
+const MAX_CHAT_MESSAGES=200;
+
+let currentUser=null;
+let lastCalcData=null;
+
+function getUsers(){
+ try{
+  return JSON.parse(localStorage.getItem("ladaUsers")||"{}");
+ }catch(_err){
+  return {};
+ }
+}
+function saveUsers(users){
+ localStorage.setItem("ladaUsers",JSON.stringify(users));
+}
+function userDataKey(username){
+ return "ladaApp:"+username;
+}
+function setAuthMessage(message,isError){
+ authMessage.textContent=message||"";
+ authMessage.style.color=isError?"#ff6b6b":"var(--text)";
+}
+function genderLabel(value){
+ if(value==="male")return "Мужской";
+ if(value==="female")return "Женский";
+ return "Не указан";
+}
+function formatProfileDate(timestamp){
+ if(typeof timestamp!=="number")return "Неизвестно";
+ const date=new Date(timestamp);
+ if(Number.isNaN(date.getTime()))return "Неизвестно";
+ return date.toLocaleDateString("ru-RU",{
+  day:"2-digit",
+  month:"2-digit",
+  year:"numeric"
+ });
+}
+function loadUserSettings(username){
+ if(!username)return {};
+ try{
+  const parsed=JSON.parse(localStorage.getItem(userDataKey(username))||"{}");
+  return parsed && typeof parsed==="object" ? parsed : {};
+ }catch(_err){
+  return {};
+ }
+}
+function getUserProfile(username){
+ const users=getUsers();
+ const account=users[username] && typeof users[username]==="object" ? users[username] : {};
+ const settings=loadUserSettings(username);
+ const carFromAccount=typeof account.car==="string" ? account.car.trim() : "";
+ const carFromSettings=typeof settings.model==="string" ? settings.model.trim() : "";
+ return {
+  username:username||"Неизвестный",
+  gender:genderLabel(account.gender),
+  registeredAt:formatProfileDate(account.registeredAt),
+  car:carFromSettings || carFromAccount || "Не указана"
+ };
+}
+function openProfileByUsername(username){
+ if(!profilePanel || !username)return;
+ const profile=getUserProfile(username);
+ profileUsername.textContent=profile.username;
+ profileGender.textContent=profile.gender;
+ profileRegisteredAt.textContent=profile.registeredAt;
+ profileCar.textContent=profile.car;
+ profilePanel.classList.remove("hidden");
+}
+function closeProfilePanel(){
+ if(!profilePanel)return;
+ profilePanel.classList.add("hidden");
+}
+function syncCurrentUserProfileCar(car){
+ if(!currentUser || !car)return;
+ const users=getUsers();
+ if(!users[currentUser] || typeof users[currentUser]!=="object")return;
+ if(users[currentUser].car===car)return;
+ users[currentUser].car=car;
+ saveUsers(users);
+}
+function resetCalculatedFields(){
+ bar.style.width="0%";
+ resourceText.innerText="";
+ level.innerText="";
+ fuelResult.innerText="";
+ lastCalcData=null;
+ updateInsights();
+}
+function invalidateResourceCalc(){
+ bar.style.width="0%";
+ resourceText.innerText="";
+ level.innerText="";
+ lastCalcData=null;
+}
+function resetFormFields(){
+ modelSelect.value="Granta";
+ part.value="engine";
+ condition.value="mixed";
+ seasonSelect.value="summer";
+ drivingStyleSelect.value="normal";
+ mileageInput.value="";
+ fuelLiters.value="";
+ fuelKm.value="";
+ notes.value="";
+ if(chatInput)chatInput.value="";
+ currentIndex=0;
+ updateSlider();
+ resetCalculatedFields();
+}
+function getGlobalChatMessages(){
+ try{
+  const parsed=JSON.parse(localStorage.getItem(GLOBAL_CHAT_KEY)||"[]");
+  if(!Array.isArray(parsed))return [];
+  return parsed.filter(function(message){
+   return message &&
+    typeof message==="object" &&
+    typeof message.user==="string" &&
+    typeof message.text==="string" &&
+    typeof message.createdAt==="number";
+  });
+ }catch(_err){
+  return [];
+ }
+}
+function saveGlobalChatMessages(messages){
+ localStorage.setItem(GLOBAL_CHAT_KEY,JSON.stringify(messages));
+}
+function formatChatDate(timestamp){
+ const date=new Date(timestamp);
+ if(Number.isNaN(date.getTime()))return "";
+ return date.toLocaleString("ru-RU",{
+  day:"2-digit",
+  month:"2-digit",
+  hour:"2-digit",
+  minute:"2-digit"
+ });
+}
+function renderChatMessages(){
+ if(!chatMessages)return;
+ const messages=getGlobalChatMessages();
+ chatMessages.innerHTML="";
+
+ if(messages.length===0){
+  const empty=document.createElement("div");
+  empty.className="chat-empty";
+  empty.textContent="Пока нет сообщений. Начните диалог.";
+  chatMessages.appendChild(empty);
+  return;
+ }
+
+ messages.forEach(function(message){
+  const item=document.createElement("article");
+  item.className="chat-item";
+  if(currentUser && message.user===currentUser){
+   item.classList.add("own");
+  }
+
+  const meta=document.createElement("div");
+  meta.className="chat-meta";
+
+  const author=document.createElement("button");
+  author.type="button";
+  author.className="chat-author chat-author-btn";
+  author.textContent=message.user;
+  author.addEventListener("click",function(){
+   openProfileByUsername(message.user);
+  });
+
+  const time=document.createElement("time");
+  time.className="chat-time";
+  time.textContent=formatChatDate(message.createdAt);
+
+  const text=document.createElement("p");
+  text.className="chat-text";
+  text.textContent=message.text;
+
+  meta.appendChild(author);
+  meta.appendChild(time);
+  item.appendChild(meta);
+  item.appendChild(text);
+  chatMessages.appendChild(item);
+ });
+ chatMessages.scrollTop=chatMessages.scrollHeight;
+}
+function sendChatMessage(){
+ if(!currentUser || !chatInput)return;
+ const text=chatInput.value.trim();
+ if(!text)return;
+
+ const messages=getGlobalChatMessages();
+ messages.push({
+  user:currentUser,
+  text:text.slice(0,400),
+  createdAt:Date.now()
+ });
+
+ if(messages.length>MAX_CHAT_MESSAGES){
+  messages.splice(0,messages.length-MAX_CHAT_MESSAGES);
+ }
+
+ saveGlobalChatMessages(messages);
+ chatInput.value="";
+ renderChatMessages();
+}
+function riskTitle(percent){
+ if(percent>60)return "Низкий";
+ if(percent>30)return "Средний";
+ if(percent>12)return "Повышенный";
+ return "Критичный";
+}
+function updateInsights(){
+ const selectedPart = part.options[part.selectedIndex]?.textContent||"-";
+ const hasCalc=Boolean(lastCalcData);
+ const mileageValue=mileageInput.value?mileageInput.value+" км":"-";
+ const fuelValue=(fuelLiters.value && fuelKm.value)?((Number(fuelLiters.value)/Number(fuelKm.value)*100).toFixed(1)+" л/100км"):"Не рассчитан";
+
+ sumModel.textContent=modelSelect.value||"-";
+ sumPart.textContent=selectedPart;
+ sumMileage.textContent=mileageValue;
+ sumRemaining.textContent=hasCalc?Math.round(lastCalcData.remaining)+" км":"Нужен расчёт";
+ sumRisk.textContent=hasCalc?riskTitle(lastCalcData.percent):"-";
+ sumFuel.textContent=fuelValue;
+
+ const tips=[];
+ if(!hasCalc){
+  tips.push("Введите пробег и нажмите «Рассчитать», чтобы получить точные рекомендации.");
+ }else{
+  if(lastCalcData.percent<=12){
+   tips.push("Высокий риск износа: запланируйте диагностику узла в ближайшее время.");
+  }else if(lastCalcData.percent<=30){
+   tips.push("Ресурс на исходе: проверьте состояние узла и подготовьте детали к замене.");
+  }else{
+   tips.push("Состояние стабильное: продолжайте контроль ресурса каждые 5 000 км.");
+  }
+ }
+ if(condition.value==="hard"){
+  tips.push("У вас тяжёлые условия эксплуатации: сократите интервалы проверки минимум на 20%.");
+ }
+ if(drivingStyleSelect.value==="aggressive"){
+  tips.push("Агрессивный стиль езды ускоряет износ: для продления ресурса перейдите на более спокойный режим.");
+ }
+ if(seasonSelect.value==="winter"){
+  tips.push("Зимой чаще проверяйте подвеску, тормоза и рабочие жидкости.");
+ }
+ if(Number(fuelLiters.value)>0 && Number(fuelKm.value)>0){
+  const fuelNow=Number((Number(fuelLiters.value)/Number(fuelKm.value)*100).toFixed(1));
+  if(fuelNow>12){
+   tips.push("Расход выше нормы: проверьте давление в шинах и состояние воздушного фильтра.");
+  }
+ }
+
+ recommendList.innerHTML="";
+ tips.slice(0,4).forEach(function(tip){
+  const li=document.createElement("li");
+  li.textContent=tip;
+  recommendList.appendChild(li);
+ });
+}
+
+function animatePanelOpen(panel){
+ panel.classList.remove("panel-enter");
+ void panel.offsetWidth;
+ panel.classList.add("panel-enter");
+}
+function showAuthScreen(){
+ authSection.classList.remove("hidden");
+ appShell.classList.add("hidden");
+ userBadge.classList.add("hidden");
+ userBadge.classList.remove("profile-link");
+ logoutBtn.classList.add("hidden");
+ calculatorPanel.classList.add("panel-hidden");
+ closeProfilePanel();
+}
+function openAppForUser(username){
+ currentUser=username;
+ localStorage.setItem("ladaCurrentUser",username);
+ authSection.classList.add("hidden");
+ appShell.classList.remove("hidden");
+ userBadge.textContent="Пользователь: "+username;
+ userBadge.classList.remove("hidden");
+ userBadge.classList.add("profile-link");
+ userBadge.title="Открыть профиль";
+ logoutBtn.classList.remove("hidden");
+ resetFormFields();
+ loadAll();
+ syncCurrentUserProfileCar(modelSelect.value);
+ renderChatMessages();
+ calculatorPanel.classList.remove("panel-hidden");
+ animatePanelOpen(calculatorPanel);
+ setAuthMessage("");
+ authPassword.value="";
+}
+function registerUser(){
+ const username=authUsername.value.trim();
+ const password=authPassword.value;
+ const gender=authGender.value;
+ const car=authCar.value;
+ if(username.length<3){
+  setAuthMessage("Логин должен быть не короче 3 символов.",true);
+  return;
+ }
+ if(password.length<4){
+  setAuthMessage("Пароль должен быть не короче 4 символов.",true);
+  return;
+ }
+ if(!gender){
+  setAuthMessage("Укажите пол для нового аккаунта.",true);
+  return;
+ }
+ if(!car){
+  setAuthMessage("Укажите машину для нового аккаунта.",true);
+  return;
+ }
+ const users=getUsers();
+ if(users[username]){
+  setAuthMessage("Такой логин уже занят.",true);
+  return;
+ }
+ users[username]={
+  password:password,
+  gender:gender,
+  car:car,
+  registeredAt:Date.now()
+ };
+ saveUsers(users);
+ setAuthMessage("Аккаунт создан. Теперь выполните вход.");
+}
+function loginUser(){
+ const username=authUsername.value.trim();
+ const password=authPassword.value;
+ const users=getUsers();
+ const account=users[username];
+ if(!account || typeof account!=="object" || account.password!==password){
+  setAuthMessage("Неверный логин или пароль.",true);
+  return;
+ }
+ openAppForUser(username);
+}
+function logout(){
+ saveAll();
+ currentUser=null;
+ localStorage.removeItem("ladaCurrentUser");
+ resetFormFields();
+ renderChatMessages();
+ showAuthScreen();
+ setAuthMessage("Вы вышли из аккаунта.");
+}
+
+function updateSlider(){
+ img.src=cars[currentIndex].img;
+ modelSelect.value=cars[currentIndex].model;
+}
+function nextCar(){currentIndex=(currentIndex+1)%cars.length;updateSlider();saveAll();}
+function prevCar(){currentIndex=(currentIndex-1+cars.length)%cars.length;updateSlider();saveAll();}
+function syncSlider(){
+ const i=cars.findIndex(c=>c.model===modelSelect.value);
+ if(i!==-1){currentIndex=i;updateSlider();}
+}
+
+function calculate(){
+ const mileage=Number(mileageInput.value);
+ if(!mileage)return;
+
+ const base={engine:250000,gearbox:200000,clutch:120000,suspension:100000};
+ const models={Granta:1,Vesta:1.1,Niva:0.9,Kalina:0.95};
+ const cond={city:0.9,mixed:1,highway:1.1,hard:0.7};
+
+ const total=base[part.value]*models[modelSelect.value]*cond[condition.value];
+ const remaining=Math.max(0,total-mileage);
+
+ const percent=Math.max(0,Math.min(100,remaining/total*100));
+ bar.style.width=percent+"%";
+ lastCalcData={remaining:remaining,percent:percent,total:total};
+
+ resourceText.innerText="Остаток: "+Math.round(remaining)+" км";
+
+ if(mileage<100000) level.innerText="Уровень: Новичок";
+ else if(mileage<200000) level.innerText="Уровень: Ветеран";
+ else level.innerText="Уровень: Легенда АвтоВАЗа";
+
+ updateInsights();
+ saveAll();
+}
+
+function calcFuel(){
+ const l=Number(fuelLiters.value);
+ const km=Number(fuelKm.value);
+ if(!l||!km)return;
+ const res=(l/km*100).toFixed(1);
+ fuelResult.innerText="Расход: "+res+" л/100км";
+ updateInsights();
+ saveAll();
+}
+
+function exportData(){
+ const text=
+`Lada отчёт
+Модель: ${modelSelect.value}
+Пробег: ${mileageInput.value}
+${resourceText.innerText}
+${level.innerText}
+${fuelResult.innerText}
+
+Заметки:
+${notes.value}
+`;
+ const blob=new Blob([text],{type:"text/plain"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="lada_report.txt";
+ a.click();
+}
+
+function saveAll(){
+ if(!currentUser)return;
+ const data={
+ model:modelSelect.value,
+ part:part.value,
+ condition:condition.value,
+ season:seasonSelect.value,
+ drivingStyle:drivingStyleSelect.value,
+ mileage:mileageInput.value,
+ fuelL:fuelLiters.value,
+  fuelKm:fuelKm.value,
+  notes:notes.value
+ };
+ localStorage.setItem(userDataKey(currentUser),JSON.stringify(data));
+ syncCurrentUserProfileCar(data.model);
+}
+
+function loadAll(){
+ if(!currentUser)return;
+ const d=loadUserSettings(currentUser);
+ modelSelect.value=d.model||"Granta";
+ part.value=d.part||"engine";
+ condition.value=d.condition||"mixed";
+ seasonSelect.value=d.season||"summer";
+ drivingStyleSelect.value=d.drivingStyle||"normal";
+ mileageInput.value=d.mileage||"";
+ fuelLiters.value=d.fuelL||"";
+ fuelKm.value=d.fuelKm||"";
+ notes.value=d.notes||"";
+ syncSlider();
+ if(mileageInput.value){
+  calculate();
+ }else{
+  bar.style.width="0%";
+  resourceText.innerText="";
+  level.innerText="";
+  lastCalcData=null;
+ }
+ if(fuelLiters.value && fuelKm.value){
+  calcFuel();
+ }else{
+  fuelResult.innerText="";
+  updateInsights();
+ }
+}
+[notes,mileageInput,fuelLiters,fuelKm].forEach(el=>el.addEventListener("input",function(){
+ if(el===mileageInput)invalidateResourceCalc();
+ saveAll();
+ updateInsights();
+}));
+[part,condition,seasonSelect,drivingStyleSelect,modelSelect].forEach(el=>el.addEventListener("change",function(){
+ if(el===part || el===condition || el===modelSelect)invalidateResourceCalc();
+ saveAll();
+ updateInsights();
+}));
+[authUsername,authPassword].forEach(el=>el.addEventListener("keydown",function(e){
+ if(e.key==="Enter")loginUser();
+}));
+if(chatSendBtn){
+ chatSendBtn.addEventListener("click",sendChatMessage);
+}
+if(openMyProfileBtn){
+ openMyProfileBtn.addEventListener("click",function(){
+  if(!currentUser)return;
+  openProfileByUsername(currentUser);
+ });
+}
+if(userBadge){
+ userBadge.addEventListener("click",function(){
+  if(!currentUser)return;
+  openProfileByUsername(currentUser);
+ });
+}
+if(profileCloseBtn){
+ profileCloseBtn.addEventListener("click",closeProfilePanel);
+}
+if(chatInput){
+ chatInput.addEventListener("keydown",function(e){
+  if(e.key==="Enter"){
+   e.preventDefault();
+   sendChatMessage();
+  }
+ });
+}
+window.addEventListener("storage",function(event){
+ if(event.key===GLOBAL_CHAT_KEY){
+  renderChatMessages();
+ }
+});
+
+const rememberedUser=localStorage.getItem("ladaCurrentUser");
+const users=getUsers();
+if(rememberedUser && users[rememberedUser]){
+ openAppForUser(rememberedUser);
+}else{
+ renderChatMessages();
+ resetFormFields();
+ showAuthScreen();
+}
+</script>
+</body>
+</html>
